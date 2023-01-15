@@ -2,10 +2,89 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
+import { useEffect, useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
+import Swal from 'sweetalert2'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const {user, status, login, logout} = useAuth();
+  const [report, setReport] = useState([]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const {email, password} = e.target.elements;
+    login(email.value, password.value);
+  }
+
+  const getReports = async () => {
+    const res = await fetch('/api/report',{
+      headers: {
+        'access-token': localStorage.getItem('user')
+      }
+    });
+    if (res){
+      const data = await res.json();
+      if (data?.reports) setReport(data.reports);
+      if (data?.error) Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer);
+          toast.addEventListener('mouseleave', Swal.resumeTimer);
+        }
+      }).fire({
+        icon: 'error',
+        title: data.error
+      });
+      console.log(report);
+    } 
+    
+  }
+
+  const handleReportDoneChange = async (e, id) => {
+    e.preventDefault();
+    const body = {
+      done: e.target.checked
+    }
+    const res = await fetch(`/api/report/${id}`,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'access-token': localStorage.getItem('user')  
+      },
+      body: JSON.stringify(body)
+      });
+      getReports()
+    }
+
+    const handleDelete = async (id) => {
+      if (!confirm('Are you sure?')) return;
+      const res = await fetch(`/api/report/${id}`,{
+        method: 'DELETE',
+        headers: {
+          'access-token': localStorage.getItem('user')
+        }
+      });
+      getReports()
+    }
+
+  useEffect(()=>{
+    console.log({status, user});
+    getReports();
+    const interval = setInterval(() => {
+      if (status == 'authenticated') {
+      getReports();
+      };
+    }, 10000);
+    return () => clearInterval(interval);
+  },[status, user])
+
+
   return (
     <>
       <Head>
@@ -15,108 +94,59 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <div className={styles.description}>
-          <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.js</code>
-          </p>
+        <div >
           <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
+
+          
+          {
+            status == 'loading' ? <p>Loading...</p> : 
+            status == 'unauthenticated' ? (
+            <form onSubmit={handleSubmit}>
+              <input type="text" name="email" placeholder="Email" />
+              <input type="password" name="password" placeholder="Password" />
+              <button type="submit">Login</button>
+            </form>) :
+            status == 'authenticated' ? <><p>Logged in as {user.name}</p><button onClick={logout}>Logout</button></> : <>Error</>
+          }
           </div>
-        </div>
-
-        <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
-            />
+          <div>
+            {status == 'authenticated' ? 
+            <div>
+              <h1>Reports</h1>
+              <button onClick={getReports}>Refresh</button>
+              <table>
+                <thead style={{backgroundColor: 'lightgray'}}>
+                  <tr>
+                    <th>Report ID</th>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>Description</th>
+                    <th>Done</th>
+                    <th>Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {report.map((report) => (
+                    <tr key={report._id} >
+                      <td>{report._id}</td>
+                      <td>{report.name}</td>
+                      <td>{report.contact}</td>
+                      <td style={{maxWidth:"200px"}}>{report.problem}</td>
+                      <td><input type="checkbox" checked={report?.done} onChange={(e)=>handleReportDoneChange(e,report?._id)}></input></td>
+                      <td><button onClick={()=>handleDelete(report?._id)}>Delete</button></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            
+            </div> :
+            <p> /ᐠ｡‸｡ᐟ\</p>}
           </div>
+          
         </div>
+        
+        
 
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
-        </div>
       </main>
     </>
   )
