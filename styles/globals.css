@@ -1,3 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+img {
+  pointer-events: none;
+}
 td {
-  border-bottom: 2px solid black;  
+  border-bottom: 2px solid black;
+}
+
+.btn {
+  @apply text-xl text-white bg-gray-600 rounded-2xl p-2
 }
