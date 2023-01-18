@@ -87,7 +87,10 @@ export default function Home() {
                 </div>
                 <div className="flex flex-col justify-center items-center gap-y-5">
                   <Link href="/report" className="btn mt-4">
-                    หน้า Report ปัญหา -&gt;
+                    หน้า Report ปัญหา ➡
+                  </Link>
+                  <Link href="/prize" className="btn mt-4">
+                    หน้ารับรางวัล ➡
                   </Link>
                   <h1 className="text-2xl text-center p-4 font-bold">
                     สร้าง QR Code
