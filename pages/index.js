@@ -4,28 +4,26 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import Swal from "sweetalert2";
 import Login from "@/components/Login";
-
+import { qrForm } from "@/constants/qrform";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const { user, status, login, logout } = useAuth();
-  const [report, setReport] = useState([]);
+  const [forms, setForms] = useState([]);
+  const [qrImage, setQRImage] = useState("");
+  const router = useRouter();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const { email, password } = e.target.elements;
-    login(email.value, password.value);
-  };
-
-  const getReports = async () => {
-    const res = await fetch("/api/report", {
+  const getQr = async () => {
+    const res = await fetch("/api/qrcode", {
       headers: {
         "access-token": localStorage.getItem("user"),
       },
     });
     if (res) {
       const data = await res.json();
-      if (data?.reports) setReport(data.reports);
+      if (data?.forms) setForms(data.forms);
       if (data?.error)
         Swal.mixin({
           toast: true,
@@ -41,47 +39,29 @@ export default function Home() {
           icon: "error",
           title: data.error,
         });
-      console.log(report);
+      console.log(forms);
     }
-  };
-
-  const handleReportDoneChange = async (e, id) => {
-    e.preventDefault();
-    const body = {
-      done: e.target.checked,
-    };
-    const res = await fetch(`/api/report/${id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "access-token": localStorage.getItem("user"),
-      },
-      body: JSON.stringify(body),
-    });
-    getReports();
-  };
-
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure?")) return;
-    const res = await fetch(`/api/report/${id}`, {
-      method: "DELETE",
-      headers: {
-        "access-token": localStorage.getItem("user"),
-      },
-    });
-    getReports();
   };
 
   useEffect(() => {
     console.log({ status, user });
-    getReports();
+    getQr();
     const interval = setInterval(() => {
       if (status == "authenticated") {
-        getReports();
+        getQr();
       }
-    }, 10000);
+      router.refresh();
+    }, 60000 * 5);
     return () => clearInterval(interval);
   }, [status, user]);
+
+  const handleChange = (value) => {
+    forms.map((form, idx) => {
+      if (form.form_type == value) {
+        setQRImage(form.qr_code);
+      }
+    });
+  };
 
   return (
     <>
@@ -93,58 +73,77 @@ export default function Home() {
             ) : status == "unauthenticated" ? (
               <Login />
             ) : status == "authenticated" ? (
-              <>
-                <p>Logged in as {user.name}</p>
-                <button onClick={logout} className="btn">Logout</button>
-              </>
-            ) : (
-              <>Error</>
-            )}
-          </div>
-          <div>
-            {status == "authenticated" ? (
               <div>
-                <h1>Reports</h1>
-                <button onClick={getReports} className="btn">Refresh</button>
-                <table>
-                  <thead style={{ backgroundColor: "lightgray" }}>
-                    <tr>
-                      <th>Report ID</th>
-                      <th>Name</th>
-                      <th>Contact</th>
-                      <th>Description</th>
-                      <th>Done</th>
-                      <th>Delete</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {report.map((report) => (
-                      <tr key={report._id}>
-                        <td>{report._id}</td>
-                        <td>{report.name}</td>
-                        <td>{report.contact}</td>
-                        <td style={{ maxWidth: "200px" }}>{report.problem}</td>
-                        <td>
-                          <input
-                            type="checkbox"
-                            checked={report?.done}
-                            onChange={(e) =>
-                              handleReportDoneChange(e, report?._id)
-                            }
-                          ></input>
-                        </td>
-                        <td>
-                          <button onClick={() => handleDelete(report?._id)}>
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div className="text-2xl text-center">
+                  <p className="bg-orange-600 text-white py-2">
+                    Login as
+                    <span className="ml-2 text-gray-100 font-bold">
+                      {user.name}
+                    </span>
+                  </p>
+                  {}
+                </div>
+                <div className="flex flex-col justify-center items-center gap-y-5">
+                  <Link href="/report" className="btn mt-4">
+                    หน้า Report ปัญหา -&gt;
+                  </Link>
+                  <h1 className="text-2xl text-center p-4 font-bold">
+                    สร้าง QR Code
+                  </h1>
+                  <h2 className="text-xl -mt-3">เลือกกิจกรรม</h2>
+                  <div className="relative w-1/2 mx-auto">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="absolute top-0 bottom-0 w-6 h-6 my-auto text-gray-400 right-2.5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <select
+                      className="w-full p-2.5 text-gray-900 font-medium bg-white text-center border rounded-md shadow-sm outline-none appearance-none focus:border-juicy-100"
+                      aria-label="Select Type"
+                      onChange={(e) => handleChange(e.target.value)}
+                    >
+                      <option defaultValue={0} value="0">
+                        กรุณาเลือกกิจกรรม
+                      </option>
+                      {qrForm.length != 0
+                        ? qrForm.map((qr, id) => {
+                            return (
+                              <option key={id} value={qr.type}>
+                                {qr.name}
+                              </option>
+                            );
+                          })
+                        : null}
+                    </select>
+                  </div>
+                  {qrImage != "" ? (
+                    <div className="qr border">
+                      <Image
+                        src={qrImage}
+                        alt="qrcode"
+                        width="500"
+                        height={500}
+                      />
+                    </div>
+                  ) : null}
+                </div>
+                {/* Footer dev */}
+                <div className="text-black py-2 absolute text-center bottom-0 bg-gray-200 w-full">
+                  <p className="text-xl font-bold">
+                    Developed by Kabigon & Nut
+                  </p>
+                  <p className="text-md">Freshman CPE, KMUTT</p>
+                </div>
               </div>
             ) : (
-              <p> /ᐠ｡‸｡ᐟ\</p>
+              <>Error</>
             )}
           </div>
         </div>
