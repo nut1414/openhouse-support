@@ -67,7 +67,7 @@ export default function Home() {
     <>
       <main>
         <div>
-          <div>
+          <div className="min-h-[110vh]">
             {status == "loading" ? (
               <p>Loading...</p>
             ) : status == "unauthenticated" ? (
@@ -134,18 +134,19 @@ export default function Home() {
                     </div>
                   ) : null}
                 </div>
-                {/* Footer dev */}
-                <div className="text-black py-2 absolute text-center bottom-0 bg-gray-200 w-full">
-                  <p className="text-xl font-bold">
-                    Developed by Kabigon & Nut
-                  </p>
-                  <p className="text-md">Freshman CPE, KMUTT</p>
-                </div>
+                
               </div>
             ) : (
               <>Error</>
             )}
           </div>
+        </div>
+        {/* Footer dev */}
+        <div className="text-black py-2  text-center bottom-0 bg-gray-200 w-full">
+          <p className="text-xl font-bold">
+            Developed by Kabigon & Nut
+          </p>
+          <p className="text-md">CPE, KMUTT  {" : )"}</p>
         </div>
       </main>
     </>
