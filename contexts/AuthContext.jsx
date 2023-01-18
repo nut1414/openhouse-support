@@ -2,13 +2,15 @@ import { useEffect, useState, useContext, createContext } from "react";
 import { encode,decode } from "js-base64";
 import Swal from "sweetalert2";
 import fetch from "../utils/fetchAxios";
+import { useRouter } from 'next/navigation';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [status, setStatus] = useState("loading");
   const [user, setUser] = useState({});
-  
+  const router = useRouter();
+
   const extractJwt = (token) => {
     const base64 = token.split('.')[1];
     const jsonPayload = decode(base64)
@@ -60,6 +62,8 @@ export const AuthProvider = ({ children }) => {
     setStatus("unauthenticated");
   }
 
+  
+
   useEffect(() => {
     try {
       const userToken = localStorage.getItem("user");
@@ -76,8 +80,10 @@ export const AuthProvider = ({ children }) => {
         throw Error("No Login Information");
       }
     } catch (e) {
+      logout()
       setUser({});
       setStatus("unauthenticated");
+      router.push('/');
     }
   }, []);
 
