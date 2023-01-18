@@ -74,13 +74,17 @@ export const AuthProvider = ({ children }) => {
           setUser(userInfo);
           setStatus("authenticated");
         } else {
+          localStorage.removeItem("user");
+          localStorage.removeItem("userinfo");
+          setStatus("unauthenticated");
           throw Error("Token expired");
         }
       } else {
+        setStatus("unauthenticated");
         throw Error("No Login Information");
       }
     } catch (e) {
-      logout()
+      logout();
       setUser({});
       setStatus("unauthenticated");
       router.push('/');

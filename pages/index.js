@@ -55,6 +55,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [status, user]);
 
+
   const handleChange = (value) => {
     forms.map((form, idx) => {
       if (form.form_type == value) {
@@ -80,6 +81,7 @@ export default function Home() {
                     <span className="ml-2 text-gray-100 font-bold">
                       {user.name}
                     </span>
+                    <button onClick={logout} className="bg-red-500 p-2 m-4 text-white">Log out</button>
                   </p>
                   {}
                 </div>

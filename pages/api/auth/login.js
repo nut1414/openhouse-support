@@ -14,7 +14,7 @@ async function handler(req, res) {
   const token = jwt.sign({ 
     user_id: account._id,
     email: account.email
-  }, process.env.TOKEN_KEY, { expiresIn: "1d" });
+  }, process.env.TOKEN_KEY, { expiresIn: "4d" });
 
   return res.status(200).json([{
     name: account.name,
