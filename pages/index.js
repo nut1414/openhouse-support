@@ -105,7 +105,7 @@ export default function Home() {
                       />
                     </svg>
                     <select
-                      className="w-full p-2.5 text-gray-900 font-medium bg-white text-center border rounded-md shadow-sm outline-none appearance-none focus:border-juicy-100"
+                      className="w-full p-2.5 text-gray-900 font-medium bg-white text-center border rounded-md shadow-sm outline-none appearance-none focus:border-juicy-100 focus:ring-juicy-100"
                       aria-label="Select Type"
                       onChange={(e) => handleChange(e.target.value)}
                     >
@@ -129,12 +129,11 @@ export default function Home() {
                         src={qrImage}
                         alt="qrcode"
                         width="500"
-                        height={500}
+                        height="500"
                       />
                     </div>
                   ) : null}
                 </div>
-                
               </div>
             ) : (
               <>Error</>
@@ -144,9 +143,19 @@ export default function Home() {
         {/* Footer dev */}
         <div className="text-black py-2  text-center bottom-0 bg-gray-200 w-full">
           <p className="text-xl font-bold">
-            Developed by Kabigon & Nut
+            Developed by{" "}
+            <Link href="https://github.com/ChaiyapatOam" className="underline">
+              Kabigon
+            </Link>{" "}
+            & {" "}
+            <Link href="https://github.com/nut1414" className="underline">
+              Nut
+            </Link>
           </p>
-          <p className="text-md">CPE, KMUTT  {" : )"}</p>
+          <Link href="/contact" className="text-red-500 text-lg">
+            ติดต่อด่วน
+          </Link>
+          <p className="text-md">CPE, KMUTT {" : )"}</p>
         </div>
       </main>
     </>
