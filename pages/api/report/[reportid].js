@@ -22,11 +22,13 @@ async function handler(req, res) {
 
   } else if (req.method === "POST"){
     const { done } = req.body;
+    const msg =  req.body?.msg;
+
     if (done == null) throw new StatusError(400, "Bad Request");
 
     let report = await reports.findOneAndUpdate(
       { _id: id }, 
-      { $set: { done } }, 
+      { $set: { done, msg: msg } }, 
       { returnDocument: "after" }
     );
     return res.status(200).json({ report, message: "Report updated" });

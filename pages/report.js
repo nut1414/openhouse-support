@@ -1,6 +1,37 @@
 import { useAuth } from "@/contexts/AuthContext";
 import React, { useEffect, useState } from "react";
 
+const ReportRow = ({ report, handleReportDoneChange, handleDelete }) => {
+  const [msg, setMsg] = useState(report?.msg);
+  const [check, setCheck] = useState(report?.done);
+
+
+  useEffect(()=> {console.log(msg)}, [msg])
+  return (
+  <tr key={report._id}>
+    <td>
+      <button onClick={() => handleDelete(report?._id)} className="text-red-400">
+        Delete
+      </button>
+    </td>
+    <td>{report._id}</td>
+    <td>{report.name}</td>
+    <td>{report.contact}</td>
+    <td style={{ maxWidth: "200px" }}>{report.problem}</td>
+    <td>
+      <input
+        type="checkbox"
+        checked={check}
+        onChange={(e) => {setCheck(e.target.checked);handleReportDoneChange(e, e.target.checked, report?._id, msg)}}
+      ></input>
+    </td>
+    <td><input type={"text"} value={msg} onChange={(e)=> setMsg(e.target.value)}></input> 
+    <button className="p-2 bg-emerald-300" onClick={(e)=>
+      handleReportDoneChange(e, check, report?._id, msg)}>Save</button></td>
+  </tr>
+)
+}
+
 export default function Report() {
   const { user, status, login, logout } = useAuth();
   const [report, setReport] = useState([]);
@@ -42,11 +73,13 @@ export default function Report() {
     return () => clearInterval(interval);
   }, [status, user]);
 
-  const handleReportDoneChange = async (e, id) => {
+  const handleReportChange = async (e,check , id, msg) => {
     e.preventDefault();
     const body = {
-      done: e.target.checked,
+      done: check,
+      msg: msg
     };
+    console.log({e,check,id,msg})
     const res = await fetch(`/api/report/${id}`, {
       method: "POST",
       headers: {
@@ -77,35 +110,18 @@ export default function Report() {
       <table>
         <thead style={{ backgroundColor: "lightgray" }}>
           <tr>
+            <th>Delete</th>
             <th>Report ID</th>
             <th>Name</th>
             <th>Contact</th>
             <th>Description</th>
             <th>Done</th>
-            <th>Delete</th>
+            <th>Note</th>
+            
           </tr>
         </thead>
         <tbody>
-          {report.map((report) => (
-            <tr key={report._id}>
-              <td>{report._id}</td>
-              <td>{report.name}</td>
-              <td>{report.contact}</td>
-              <td style={{ maxWidth: "200px" }}>{report.problem}</td>
-              <td>
-                <input
-                  type="checkbox"
-                  checked={report?.done}
-                  onChange={(e) => handleReportDoneChange(e, report?._id)}
-                ></input>
-              </td>
-              <td>
-                <button onClick={() => handleDelete(report?._id)} className="text-red-400">
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
+          {report.map((report) => <ReportRow key={report._id} report={report} handleReportDoneChange={handleReportChange} handleDelete={handleDelete} />)}
         </tbody>
       </table>
     </div>
