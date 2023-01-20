@@ -21,8 +21,8 @@ export const qrForm = [
     { name: "INC Workshop", link: "https://openhouse-api-922np.ondigitalocean.app/form?type=inc_work&form_key=", type: "inc_work" },
     { name: "CHE Normal", link: "https://openhouse-api-922np.ondigitalocean.app/form?type=che_norm&form_key=", type: "che_norm" },
     { name: "CHE Workshop", link: "https://openhouse-api-922np.ondigitalocean.app/form?type=che_work&form_key=", type: "che_work" },
-    { name: "Central Normal", link: "https://openhouse-api-922np.ondigitalocean.app/form?type=central_norm&form_key=", type: "central_norm" },
-    { name: "Central Question", link: "https://openhouse-api-922np.ondigitalocean.app/form?type=central_question&form_key=", type: "central_question" },
-    { name: "Central Innovation", link: "https://openhouse-api-922np.ondigitalocean.app/form?type=central_innovation&form_key=", type: "central_innovation" },
-    { name: "Central Hackathon", link: "https://openhouse-api-922np.ondigitalocean.app/form?type=central_hackathon&form_key=", type: "central_hackathon" },
+    // { name: "Central Normal", link: "https://openhouse-api-922np.ondigitalocean.app/form?type=central_norm&form_key=", type: "central_norm" },
+    // { name: "Central Question", link: "https://openhouse-api-922np.ondigitalocean.app/form?type=central_question&form_key=", type: "central_question" },
+    // { name: "Central Innovation", link: "https://openhouse-api-922np.ondigitalocean.app/form?type=central_innovation&form_key=", type: "central_innovation" },
+    // { name: "Central Hackathon", link: "https://openhouse-api-922np.ondigitalocean.app/form?type=central_hackathon&form_key=", type: "central_hackathon" },
 ]
