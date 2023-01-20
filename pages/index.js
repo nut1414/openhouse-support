@@ -95,7 +95,7 @@ export default function Home() {
                   <Link href="/stamp" className="btn mt-4">
                     หน้า Stamp ➡
                   </Link>
-                  <Link href="/stamp" className="btn mt-4">
+                  <Link href="/password" className="btn mt-4">
                     หน้า Reset Password ➡
                   </Link>
                   <h1 className="text-2xl text-center p-4 font-bold">
