@@ -1,6 +1,7 @@
 import { errorHandler, StatusError } from "@/middlewares/errorHandler";
 import { dbCollections } from "@/utils/db";
 import { verifyUserToken } from "@/utils/auth";
+import bcrypt from "bcrypt";
 
 async function handler(req, res){
   const { users } = await dbCollections(["users"]);
@@ -18,9 +19,12 @@ async function handler(req, res){
       phone: user.phone,
       name: user.name,
     });
+
   }else if (req.method == "POST"){
-    const { password } = req.body;
-    if (!password) throw new StatusError(400,'Bad Request');
+    const { password } = JSON.parse(req.body);
+    console.log(password)
+    if (password?.length == 0) throw new StatusError(400,'Bad Request');
+    console.log(password)
     const encryptedpass = await bcrypt.hash(password, 10);
     const user = await users.findOneAndUpdate(
       { email },
