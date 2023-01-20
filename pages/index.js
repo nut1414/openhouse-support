@@ -68,7 +68,7 @@ export default function Home() {
     <>
       <main>
         <div>
-          <div className="min-h-[110vh]">
+          <div className="min-h-[120vh]">
             {status == "loading" ? (
               <p>Loading...</p>
             ) : status == "unauthenticated" ? (
@@ -85,7 +85,7 @@ export default function Home() {
                   </p>
                   {}
                 </div>
-                <div className="flex flex-col justify-center items-center gap-y-5">
+                <div className="flex justify-center items-center gap-4 flex-wrap">
                   <Link href="/report" className="btn mt-4">
                     หน้า Report ปัญหา ➡
                   </Link>
@@ -98,6 +98,9 @@ export default function Home() {
                   <Link href="/password" className="btn mt-4">
                     หน้า Reset Password ➡
                   </Link>
+                </div>
+                <div className="flex flex-col justify-center items-center gap-y-5">
+                  
                   <h1 className="text-2xl text-center p-4 font-bold">
                     สร้าง QR Code
                   </h1>
