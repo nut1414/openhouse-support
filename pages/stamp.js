@@ -1,8 +1,9 @@
 import { useAuth } from "@/contexts/AuthContext";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { qrForm } from "@/constants/qrform";
 
-const StampCheck = ({name, checked, setStamp, allstamps}) => {
+const StampCheck = ({name, display, checked, setStamp, allstamps}) => {
   const handleChange = (e) => {
     const newAr =  [...allstamps.stamps]
     newAr[newAr.findIndex((value) => value.name == name)].done = e.target.checked
@@ -13,7 +14,7 @@ const StampCheck = ({name, checked, setStamp, allstamps}) => {
   return (
     <>
       <span className="text-left">
-        <label><input type="checkbox" label={name} checked={checked} onChange={handleChange}/>{name}</label>
+        <label><input type="checkbox" label={name} checked={checked} onChange={handleChange}/>{display}</label>
       </span>
       <br/>
     </>
@@ -109,7 +110,7 @@ export default function Stamp() {
                             <td>{userStamp.name}</td>
                             <td className="text-left">
                               {userStamp?.stamps?.map((s) => {
-                                return (<StampCheck key={s.name} name={s.name} checked={s.done} allstamps ={userStamp} setStamp={setUserStamp}/>)
+                                return (<StampCheck key={s.name} name={s.name} display={qrForm.find(qr => qr.type == s.name)?.name || s.name} checked={s.done} allstamps ={userStamp} setStamp={setUserStamp}/>)
                               })}
                                 <button className="bg-emerald-300 p-2" onClick={handleStampSubmit}>Save</button>
                             </td>
