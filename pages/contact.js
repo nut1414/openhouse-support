@@ -25,6 +25,24 @@ export default function Contact() {
           0630715705 (Kabigon)
         </a>
       </div>
+      <div className="flex flex-row items-center space-x-6 w-1/2 rounded-md border border-gray-400 hover:border hover:border-juicy-100 p-4">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          className="bi bi-telephone-fill h-4 w-4 text-juicy-100"
+          viewBox="0 0 16 16"
+        >
+          
+        </svg>
+        <a
+          href=""
+          className="text-black font-bold text-base underline"
+        >
+          Discord: nut1414#6428 (Nut)
+        </a>
+      </div>
     </div>
   );
 }
