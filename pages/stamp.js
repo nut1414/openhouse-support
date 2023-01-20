@@ -2,11 +2,29 @@ import { useAuth } from "@/contexts/AuthContext";
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
-export default function Prize() {
+const StampCheck = ({name, checked, setStamp, allstamps}) => {
+  const handleChange = (e) => {
+    const newAr =  [...allstamps.stamps]
+    newAr[newAr.findIndex((value) => value.name == name)].done = e.target.checked
+    console.log(newAr)
+    setStamp({...allstamps,stamps:newAr})
+  };
+
+  return (
+    <>
+      <span className="text-left">
+        <label><input type="checkbox" label={name} checked={checked} onChange={handleChange}/>{name}</label>
+      </span>
+      <br/>
+    </>
+  )
+}
+
+export default function Stamp() {
     const { user, status, login, logout } = useAuth();
-    const [gift, setGift] = useState(null);
-    const getGifts = async (email) => {
-        const res = await fetch(`/api/gift/${email}`, {
+    const [userStamp, setUserStamp] = useState(null);
+    const getUserStamp = async (email) => {
+        const res = await fetch(`/api/stamp/${email}`, {
             method: "GET",
             headers: {
                 "access-token": localStorage.getItem("user"),
@@ -15,7 +33,7 @@ export default function Prize() {
         if (res) {
             const data = await res.json();
             //   console.log(data);
-            if (data) setGift(data);
+            if (data) setUserStamp(data);
             if (data?.error) {
                 Swal.mixin({
                     toast: true,
@@ -31,18 +49,19 @@ export default function Prize() {
                     icon: "error",
                     title: data.error,
                 });
-                setGift(null)
+                setUserStamp(null)
             }
             //   console.log(gift);
         }
     };
 
-    const handleGiftDoneChange = async (e, email) => {
+    const handleStampSubmit = async (e) => {
         e.preventDefault();
         const body = {
-            giftRecieved: e.target.checked,
+            estamp: userStamp.stamps,
         };
-        const res = await fetch(`/api/gift/${email}`, {
+
+        const res = await fetch(`/api/stamp/${userStamp.email}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -50,16 +69,16 @@ export default function Prize() {
             },
             body: JSON.stringify(body),
         });
-        getGifts(email);
+        getUserStamp(userStamp.email);
     };
 
     return (
         <div className="p-4 md:p-10 flex flex-col gap-4">
-            <h1 className="text-3xl">Prize</h1>
+            <h1 className="text-3xl">Estamp</h1>
             <form
                 onSubmit={(e) => {
-                    getGifts(e.target[0].value);
-                    console.log(gift)
+                    getUserStamp(e.target[0].value);
+                    // console.log(userStamp)
                     e.preventDefault();
                 }}>
                 <div className="flex flex-row gap-2 items-center">
@@ -69,7 +88,7 @@ export default function Prize() {
                 <div className="mt-4 flex flex-row gap-2 items-center">
                     <button type="submit" className="btn">Search</button>
                     <button type="reset" className="btn" onClick={(e) => {
-                        setGift(null)
+                        setUserStamp(null)
                     }}>Clear</button>
                 </div>
             </form>
@@ -79,24 +98,23 @@ export default function Prize() {
                         <th className="w-1/4 hidden md:block">ID</th>
                         <th className="w-1/4">Email</th>
                         <th className="w-1/4">Name</th>
-                        <th className="w-1/4">Gift Recieved</th>
+                        <th className="w-1/4">Stamp Recieved</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {gift &&
-                        <tr key={gift._id}>
-                            <td className="hidden md:block">{gift._id}</td>
-                            <td>{gift.email}</td>
-                            <td>{gift.name}</td>
-                            <td className="text-center">
-                                <input
-                                    type="checkbox"
-                                    checked={gift?.giftRecieved}
-                                    onChange={(e) => handleGiftDoneChange(e, gift?.email)}
-                                    className=""
-                                />
+                    {userStamp &&
+                        <tr key={userStamp._id}>
+                            <td className="hidden md:block">{userStamp._id}</td>
+                            <td>{userStamp.email}</td>
+                            <td>{userStamp.name}</td>
+                            <td className="text-left">
+                              {userStamp?.stamps?.map((s) => {
+                                return (<StampCheck key={s.name} name={s.name} checked={s.done} allstamps ={userStamp} setStamp={setUserStamp}/>)
+                              })}
+                                <button className="bg-emerald-300 p-2" onClick={handleStampSubmit}>Save</button>
                             </td>
                         </tr>
+
                     }
                 </tbody>
             </table>

@@ -92,6 +92,9 @@ export default function Home() {
                   <Link href="/prize" className="btn mt-4">
                     หน้ารับรางวัล ➡
                   </Link>
+                  <Link href="/stamp" className="btn mt-4">
+                    หน้า Stamp ➡
+                  </Link>
                   <h1 className="text-2xl text-center p-4 font-bold">
                     สร้าง QR Code
                   </h1>
