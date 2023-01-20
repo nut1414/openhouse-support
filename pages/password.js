@@ -37,7 +37,7 @@ export default function password() {
   return (
     <>
     <div className="p-4 md:p-10 flex flex-col gap-4">
-            <h1 className="text-3xl">Estamp</h1>
+            <h1 className="text-3xl">Reset Password</h1>
             <form
                 onSubmit={(e) => {
                     setPassword(e.target[0].value, e.target[1].value);
