@@ -10,5 +10,5 @@ td {
 }
 
 .btn {
-  @apply text-xl text-white bg-gray-600 rounded-2xl p-2
+  @apply text-xl text-white bg-gray-600 rounded-2xl p-2 mt-4
 }

@@ -40,7 +40,7 @@ export default function password() {
             <h1 className="text-3xl">Reset Password</h1>
             <form
                 onSubmit={(e) => {
-                    setPassword(e.target[0].value, e.target[1].value);
+                    // setPassword(e.target[0].value, e.target[1].value);
                     e.preventDefault();
                 }}>
                 <div className="flex flex-row gap-2 items-center">

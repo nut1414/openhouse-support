@@ -13,6 +13,8 @@ export default function Home() {
   const { user, status, login, logout } = useAuth();
   const [forms, setForms] = useState([]);
   const [qrImage, setQRImage] = useState("");
+  const [countRecieved, setCountRecieved] = useState(0);
+
   const router = useRouter();
 
   const getQr = async () => {
@@ -43,18 +45,49 @@ export default function Home() {
     }
   };
 
+  const getCountRecieved = async () => {
+    const res = await fetch(`/api/user/countGiftRecieved`, {
+      method: "GET",
+      headers: {
+        "access-token": localStorage.getItem("user"),
+      },
+    });
+    if (res) {
+      const data = await res.json();
+      if (data) setCountRecieved(data);
+      if (data?.error) {
+        Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener("mouseenter", Swal.stopTimer);
+            toast.addEventListener("mouseleave", Swal.resumeTimer);
+          },
+        }).fire({
+          icon: "error",
+          title: data.error,
+        });
+        setCountRecieved(0);
+      }
+      console.log(countRecieved);
+    }
+  };
   useEffect(() => {
     console.log({ status, user });
     getQr();
+    // getCountRecieved();
     const interval = setInterval(() => {
       if (status == "authenticated") {
         getQr();
+        // getCountRecieved();
       }
       router.refresh();
     }, 60000 * 5);
     return () => clearInterval(interval);
   }, [status, user]);
-
 
   const handleChange = (value) => {
     forms.map((form, idx) => {
@@ -81,7 +114,12 @@ export default function Home() {
                     <span className="ml-2 text-gray-100 font-bold">
                       {user.name}
                     </span>
-                    <button onClick={logout} className="bg-red-500 p-2 m-4 text-white">Log out</button>
+                    <button
+                      onClick={logout}
+                      className="bg-red-500 p-2 m-4 text-white rounded-xl"
+                    >
+                      Log out
+                    </button>
                   </p>
                   {}
                 </div>
@@ -89,7 +127,7 @@ export default function Home() {
                   <Link href="/report" className="btn mt-4">
                     หน้า Report ปัญหา ➡
                   </Link>
-                  <Link href="/prize" className="btn mt-4">
+                  {/* <Link href="/prize" className="btn mt-4">
                     หน้ารับรางวัล ➡
                   </Link>
                   <Link href="/stamp" className="btn mt-4">
@@ -97,15 +135,16 @@ export default function Home() {
                   </Link>
                   <Link href="/password" className="btn mt-4">
                     หน้า Reset Password ➡
-                  </Link>
+                  </Link> */}
                 </div>
                 <div className="flex flex-col justify-center items-center gap-y-5">
-                  
-                  <h1 className="text-2xl text-center p-4 font-bold">
-                    สร้าง QR Code
-                  </h1>
-                  <h2 className="text-xl -mt-3">เลือกกิจกรรม</h2>
-                  <div className="relative w-1/2 mx-auto">
+                  <span className="btn">
+                    รับรางวัลไปแล้ว{" "}
+                    <span className="bg-red-500 p-0.5 rounded-lg">1320</span> คน
+                    ✨
+                  </span>
+                  {/* <h2 className="text-xl -mt-3">เลือกกิจกรรม</h2> */}
+                  {/* <div className="relative w-1/2 mx-auto">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="absolute top-0 bottom-0 w-6 h-6 my-auto text-gray-400 right-2.5"
@@ -136,7 +175,7 @@ export default function Home() {
                           })
                         : null}
                     </select>
-                  </div>
+                  </div> */}
                   {qrImage != "" ? (
                     <div className="qr border">
                       <Image
@@ -161,7 +200,7 @@ export default function Home() {
             <Link href="https://github.com/ChaiyapatOam" className="underline">
               Kabigon
             </Link>{" "}
-            & {" "}
+            &{" "}
             <Link href="https://github.com/nut1414" className="underline">
               Nut
             </Link>
